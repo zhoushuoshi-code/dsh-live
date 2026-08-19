@@ -30,6 +30,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run check
       - run: pnpm run build
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high --registry=https://registry.npmjs.org
       - name: Build Relay container
         run: docker build --tag dsh-live-relay:ci .
       - name: Build installable tarball
