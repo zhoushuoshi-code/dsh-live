@@ -133,6 +133,10 @@ DSH Live is being designed against DeepSeek Harness's official extension seams:
 
 No DOM scraping, UI monkey-patching, or dependency on private in-memory objects is planned.
 
+### Approval bridge: verified
+
+The first technical spike passed against DeepSeek Harness `0.1.0-rc.7`. DSH Live consumes the public `ctx.apiProxy` service as a second client; it does not register or steal an `approval/request` answerer. Desktop and mobile receive the same stable pending request, the first valid response wins, mobile disconnect leaves desktop approval live, and turn cancellation closes both views. See the [reproducible spike report](docs/approval-bridge-spike.md).
+
 ## Security model
 
 Remote approval is a security boundary, not just a notification feature. The implementation and threat model must be reviewed before the first release.
@@ -164,8 +168,8 @@ If notifications are unavailable, an open PWA must still receive live updates. I
 
 ## Roadmap
 
-- [ ] Validate the mobile/desktop approval bridge without stealing desktop ownership
-- [ ] Scaffold the installable DSH profile bundle and commit prebuilt artifacts
+- [x] Validate the mobile/desktop approval bridge without stealing desktop ownership
+- [x] Scaffold the installable DSH profile bundle and commit prebuilt artifacts
 - [ ] Implement QR pairing and encrypted session transport
 - [ ] Build the mobile approval inbox and live state machine
 - [ ] Add text, system dictation, and native image attachment flow
