@@ -123,7 +123,7 @@ flowchart LR
     B -->|official approval seam| A
 ```
 
-The desktop plugin initiates the outbound connection, so the user does not expose a local port to the public internet. The relay transports encrypted envelopes and should not need access to prompts, commands, images, results, or API keys.
+The desktop plugin initiates the outbound connection, so the user does not expose a local port to the public internet. The relay transports encrypted envelopes and has no access to prompts, commands, images, results, pairing secrets, or API keys. It necessarily observes routing and traffic metadata. See the [versioned E2EE protocol and threat model](docs/e2ee-protocol.md).
 
 DSH Live is being designed against DeepSeek Harness's official extension seams:
 
@@ -170,7 +170,8 @@ If notifications are unavailable, an open PWA must still receive live updates. I
 
 - [x] Validate the mobile/desktop approval bridge without stealing desktop ownership
 - [x] Scaffold the installable DSH profile bundle and commit prebuilt artifacts
-- [ ] Implement QR pairing and encrypted session transport
+- [x] Implement the QR pairing, E2EE session protocol, and blind-relay core
+- [ ] Deploy the hosted WSS relay and connect the Host/mobile transport adapters
 - [ ] Build the mobile approval inbox and live state machine
 - [ ] Add text, system dictation, and native image attachment flow
 - [ ] Add final-result review and follow-up input

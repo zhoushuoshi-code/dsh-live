@@ -40,3 +40,26 @@ export type {
   ApprovalResolved,
   MobileApprovalDecision,
 } from './approval-bridge.js'
+
+export {
+  createHostPairing,
+  createMobilePairing,
+  DEFAULT_PAIRING_TTL_MS,
+  E2EE_PROTOCOL_VERSION,
+  E2eeProtocolError,
+  HostPairing,
+  MobilePairing,
+  parsePairingUrl,
+  SecureChannel,
+} from './crypto/protocol.js'
+export type {
+  AcceptedPairing,
+  CipherDirection,
+  CipherEnvelope,
+  E2eeErrorCode,
+  PairingHello,
+  PairingInvitation,
+} from './crypto/protocol.js'
+export { renderPairingQrSvg } from './crypto/qr.js'
+export { BlindRelayError, BlindRelayRoom } from './relay/blind-room.js'
+export type { RelayConnection, RelayPeer, RelayRole } from './relay/blind-room.js'

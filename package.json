@@ -28,6 +28,9 @@
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-host-apiproxy": "0.1.0-rc.7"
   },
+  "dependencies": {
+    "qrcode-generator": "^2.0.4"
+  },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-agent": "0.1.0-rc.7",
