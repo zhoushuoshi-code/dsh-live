@@ -88,6 +88,26 @@ function desktop(api: ApiProxy, signal: AbortSignal): {
 }
 
 describe('real WebSocket mobile approval loop', () => {
+  it('keeps idle public WebSockets alive with protocol ping frames', async () => {
+    const relay = await startBlindRelayServer({ port: 0, heartbeatIntervalMs: 20 })
+    relays.push(relay)
+    const url = new URL(relay.wsUrl)
+    url.searchParams.set('roomId', 'AAAAAAAAAAAAAAAAAAAAAA')
+    url.searchParams.set('role', 'host')
+    const socket = await openSocket(url.href)
+
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => { reject(new Error('relay heartbeat timed out')) }, 500)
+      socket.once('ping', () => {
+        clearTimeout(timeout)
+        resolve()
+      })
+    })
+
+    expect(socket.readyState).toBe(WebSocket.OPEN)
+    socket.close()
+  })
+
   it('serves the installable mobile shell with strict security headers', async () => {
     const relay = await startBlindRelayServer({ port: 0 })
     relays.push(relay)

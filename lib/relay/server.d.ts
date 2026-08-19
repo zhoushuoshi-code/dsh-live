@@ -6,6 +6,7 @@ export interface BlindRelayServerOptions {
     maxRooms?: number;
     roomIdleMs?: number;
     maxFrameBytes?: number;
+    heartbeatIntervalMs?: number;
 }
 export interface RunningBlindRelayServer {
     readonly host: string;

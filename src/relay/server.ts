@@ -37,6 +37,7 @@ export interface BlindRelayServerOptions {
   maxRooms?: number
   roomIdleMs?: number
   maxFrameBytes?: number
+  heartbeatIntervalMs?: number
 }
 
 interface ActiveRoom {
@@ -63,8 +64,12 @@ export async function startBlindRelayServer(
   const maxRooms = options.maxRooms ?? 10_000
   const roomIdleMs = options.roomIdleMs ?? 30 * 60 * 1000
   const maxFrameBytes = options.maxFrameBytes ?? MAX_TRANSPORT_FRAME_BYTES
+  const heartbeatIntervalMs = options.heartbeatIntervalMs ?? 25_000
   if (!Number.isSafeInteger(maxRooms) || maxRooms <= 0) throw new RangeError('maxRooms must be positive')
   if (!Number.isSafeInteger(roomIdleMs) || roomIdleMs <= 0) throw new RangeError('roomIdleMs must be positive')
+  if (!Number.isSafeInteger(heartbeatIntervalMs) || heartbeatIntervalMs <= 0) {
+    throw new RangeError('heartbeatIntervalMs must be positive')
+  }
   if (options.publicOrigin !== undefined) {
     const origin = new URL(options.publicOrigin)
     if (origin.origin !== options.publicOrigin || (origin.protocol !== 'https:' && origin.protocol !== 'http:')) {
@@ -74,7 +79,23 @@ export async function startBlindRelayServer(
 
   const rooms = new Map<string, ActiveRoom>()
   const sockets = new Set<WebSocket>()
+  const heartbeatAlive = new Map<WebSocket, boolean>()
   const webSockets = new WebSocketServer({ noServer: true, maxPayload: maxFrameBytes, perMessageDeflate: false })
+  const heartbeat = setInterval(() => {
+    for (const ws of sockets) {
+      if (ws.readyState !== WebSocket.OPEN) {
+        ws.terminate()
+        continue
+      }
+      if (heartbeatAlive.get(ws) !== true) {
+        ws.terminate()
+        continue
+      }
+      heartbeatAlive.set(ws, false)
+      ws.ping()
+    }
+  }, heartbeatIntervalMs)
+  heartbeat.unref?.()
 
   const expire = (roomId: string) => {
     const active = rooms.get(roomId)
@@ -141,7 +162,18 @@ export async function startBlindRelayServer(
       const active = roomFor(roomId)
       webSockets.handleUpgrade(req, socket, head, (ws) => {
         sockets.add(ws)
-        let connection: RelayConnection
+        heartbeatAlive.set(ws, true)
+        ws.on('pong', () => { heartbeatAlive.set(ws, true) })
+        let connection: RelayConnection | undefined
+        ws.once('close', () => {
+          sockets.delete(ws)
+          heartbeatAlive.delete(ws)
+          if (connection === undefined) return
+          connection.disconnect()
+          // One endpoint disappearing invalidates this ephemeral room. Closing
+          // its peer lets the Host generate a fresh one-time QR immediately.
+          expire(roomId)
+        })
         try {
           connection = active.room.connect(role as RelayRole, {
             send(data) {
@@ -166,17 +198,10 @@ export async function startBlindRelayServer(
             : Array.isArray(data)
               ? Uint8Array.from(Buffer.concat(data))
               : Uint8Array.from(data)
-          void connection.forward(bytes).catch((error: unknown) => {
+          void connection?.forward(bytes).catch((error: unknown) => {
             const reason = error instanceof BlindRelayError ? error.code : 'relay forwarding failed'
             ws.close(1009, reason)
           })
-        })
-        ws.once('close', () => {
-          sockets.delete(ws)
-          connection.disconnect()
-          // One endpoint disappearing invalidates this ephemeral room. Closing
-          // its peer lets the Host generate a fresh one-time QR immediately.
-          expire(roomId)
         })
       })
     } catch {
@@ -200,9 +225,11 @@ export async function startBlindRelayServer(
     httpUrl: `http://${displayHost}:${String(address.port)}`,
     wsUrl: `ws://${displayHost}:${String(address.port)}/v1/connect`,
     async close() {
+      clearInterval(heartbeat)
       for (const active of rooms.values()) active.room.close(1001, 'relay stopping')
       rooms.clear()
       for (const ws of sockets) ws.terminate()
+      heartbeatAlive.clear()
       await new Promise<void>((resolve, reject) => {
         server.close(error => { if (error === undefined) resolve(); else reject(error) })
       })

@@ -20,6 +20,7 @@ const relay = await startBlindRelayServer({
   ...(publicOrigin === undefined ? {} : { publicOrigin }),
   maxRooms: integerEnv('MAX_ROOMS', 10_000),
   roomIdleMs: integerEnv('ROOM_IDLE_MS', 30 * 60 * 1000),
+  heartbeatIntervalMs: integerEnv('HEARTBEAT_MS', 25_000),
 })
 
 console.log(`DSH Live relay listening on ${relay.httpUrl}`)

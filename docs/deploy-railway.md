@@ -6,10 +6,10 @@ transport. No database, DeepSeek API key, QR secret, or encryption key is
 stored in Railway.
 
 > [!IMPORTANT]
-> DSH Live is pre-alpha. Deploy one replica for development and real-device
-> testing. The current release has no background Push Notification, and a
-> phone or proxy may suspend an idle WebSocket. Keep the mobile PWA in the
-> foreground during the first acceptance run.
+> DSH Live is a preview. Deploy one replica for development and real-device
+> testing. Relay Ping/Pong frames keep idle network paths active, but the
+> current release has no background Push Notification and a phone OS may still
+> suspend a background PWA. Keep it in the foreground during acceptance.
 
 ## What this costs
 
@@ -71,6 +71,7 @@ Open **Variables** and add:
 PUBLIC_ORIGIN=https://dsh-live-production.example.up.railway.app
 MAX_ROOMS=1000
 ROOM_IDLE_MS=1800000
+HEARTBEAT_MS=25000
 ```
 
 Replace the example origin with the generated hostname. `PUBLIC_ORIGIN` must:
@@ -148,7 +149,7 @@ pnpm install
 pnpm run check
 pnpm run build
 pnpm pack
-dsh plugin --profile web add ./dsh-live-0.0.0.tgz
+dsh plugin --profile web add ./dsh-live-0.1.0-preview.1.tgz
 ```
 
 Edit the Web profile's `cordis.patch.yml`:

@@ -1,9 +1,27 @@
 {
   "name": "dsh-live",
-  "version": "0.0.0",
+  "version": "0.1.0-preview.1",
   "private": true,
   "packageManager": "pnpm@11.22.0",
-  "description": "Mobile approval and live activity companion for DeepSeek Harness",
+  "description": "End-to-end encrypted mobile approval companion for DeepSeek Harness",
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "agent",
+    "approval",
+    "mobile",
+    "pwa",
+    "e2ee",
+    "websocket"
+  ],
+  "homepage": "https://github.com/zhoushuoshi-code/dsh-live#readme",
+  "bugs": {
+    "url": "https://github.com/zhoushuoshi-code/dsh-live/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhoushuoshi-code/dsh-live.git"
+  },
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -16,6 +34,8 @@
     "docs",
     "cordis.patch.yml",
     "README.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -24,6 +44,9 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check": "pnpm run typecheck && pnpm run test"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
   },
   "dsh": {
     "bundle": {

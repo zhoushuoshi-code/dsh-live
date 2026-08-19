@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible DSH Live failure without sharing secrets.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include QR fragments, prompts, API keys, or private Relay logs.
+  - type: input
+    id: dsh-version
+    attributes:
+      label: DeepSeek Harness version
+      placeholder: 0.1.0-rc.7
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Host and phone environment
+      description: Host OS, Node version, phone model, OS, and browser version.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed QR secrets, prompts, API keys, and private payloads.
+          required: true

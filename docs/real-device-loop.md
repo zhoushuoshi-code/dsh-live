@@ -56,6 +56,7 @@ Runtime variables:
 | `PUBLIC_ORIGIN` | unset | Exact allowed browser origin for Mobile-role sockets |
 | `MAX_ROOMS` | `10000` | In-memory room ceiling |
 | `ROOM_IDLE_MS` | `1800000` | Idle room lifetime |
+| `HEARTBEAT_MS` | `25000` | WebSocket Ping interval for idle public connections |
 
 For real phones, a publicly trusted HTTPS certificate is required. Plain LAN HTTP and untrusted self-signed certificates are not a supported production path.
 
@@ -65,7 +66,7 @@ From a built checkout:
 
 ```bash
 pnpm pack
-dsh plugin --profile web add ./dsh-live-0.0.0.tgz
+dsh plugin --profile web add ./dsh-live-0.1.0-preview.1.tgz
 ```
 
 Edit the Web profile's `cordis.patch.yml`:

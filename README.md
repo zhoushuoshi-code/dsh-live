@@ -5,9 +5,10 @@
 
 ### Your agent calls. You decide.
 
-**Approve sensitive actions, follow live progress, send photos, and review results from your phone — without staying at your desk.**
+**Approve or reject sensitive DeepSeek Harness actions from your phone without giving up desktop control.**
 
-[![Project status](https://img.shields.io/badge/status-pre--alpha-ff6b6b?style=flat-square)](#project-status)
+[![Project status](https://img.shields.io/badge/status-v0.1_preview-f59e0b?style=flat-square)](#project-status)
+[![CI](https://github.com/zhoushuoshi-code/dsh-live/actions/workflows/ci.yml/badge.svg)](https://github.com/zhoushuoshi-code/dsh-live/actions/workflows/ci.yml)
 [![DeepSeek Harness](https://img.shields.io/badge/DeepSeek_Harness-0.1.0--rc.7-4f46e5?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness)
 [![iPhone](https://img.shields.io/badge/iPhone-iOS_17%2B-111827?style=flat-square)](#platform-support)
 [![Android](https://img.shields.io/badge/Android-12%2B-22c55e?style=flat-square)](#platform-support)
@@ -18,7 +19,7 @@
 </div>
 
 > [!IMPORTANT]
-> **DSH Live is currently a source-installable pre-alpha.** The minimum encrypted phone-approval loop is implemented, but no public production relay or signed `v0.1.0` release exists yet. Use the development installation only with a relay you control.
+> **DSH Live is a source-installable `v0.1.0` preview.** The encrypted phone-approval loop is implemented and maintainer-tested on iPhone and Android. There is no shared public Relay or npm release: deploy a Relay you control and pin installations to a reviewed Git commit or preview tag.
 
 ## Stop babysitting your coding agent
 
@@ -40,43 +41,37 @@ It is not a remote terminal and it is not a miniature IDE. It is the focused con
 
 See what the agent wants to do, why approval is required, and the relevant tool context. **Allow once** or **reject** from your phone. Approval remains fail-closed: no connection, malformed response, or expired request can silently grant access.
 
-### A live pulse, not a wall of logs
+### Desktop authority stays intact
 
-Know whether the agent is running, waiting for approval, completed, failed, or cancelled. DSH Live summarizes activity for a glanceable phone view instead of trying to reproduce the desktop interface.
+DSH Live mirrors the official pending approval registry instead of registering a competing approval handler. Desktop and phone can race safely, the first valid decision wins, and a phone or Relay disconnect never grants access or disables desktop approval.
 
-### Show the agent what you mean
+### The Relay carries ciphertext
 
-Take a photo or choose an image and send it as a native DeepSeek Harness attachment. Use cases include UI bugs, device screenshots, handwritten notes, hardware setups, and visual acceptance feedback.
-
-### Review the outcome from anywhere
-
-Receive the final summary, test status, and changed-file count. Accept the result as reviewed or send a concise follow-up. Acceptance records your review; it does **not** commit, push, deploy, or run another hidden action.
+One-time QR pairing derives directional session keys. Tool names, reasons, and decisions cross the hosted Relay only inside authenticated AES-256-GCM envelopes. The Relay still observes connection metadata; DSH Live does not claim anonymity.
 
 ## The first release
 
-Version `v0.1.0` is deliberately small. It will prove one high-value workflow end to end on both iPhone and Android.
+Version `v0.1.0-preview.1` deliberately proves one high-value workflow end to end on iPhone and Android.
 
-| Capability | v0.1.0 behavior |
+| Capability | `v0.1.0-preview.1` behavior |
 | --- | --- |
 | Secure pairing | Scan a one-time QR code shown by the DSH plugin |
 | Approval inbox | Inspect requests, **allow once**, or **reject** |
-| Live activity | Running, waiting, completed, failed, and cancelled states |
-| Mobile input | Send text or use the phone keyboard's built-in dictation |
-| Camera and images | Capture or select an image and attach it to the agent conversation |
-| Result review | Read the summary and test signal, then accept or request changes |
-| Notifications | Best-effort PWA notifications with a real-time in-app fallback |
+| Desktop coexistence | Keep the official desktop approval live; first valid decision wins |
+| End-to-end encryption | Keep approval payloads unreadable to the hosted Relay |
+| Self-hosted PWA | Serve the phone UI and WSS Relay from one Docker deployment |
+| Failure behavior | Disconnect, replay, tampering, and stale decisions fail closed |
 
-The first release will **not** include a terminal, code editor, multi-agent dashboard, Git operations, deployment buttons, rollback, custom speech recognition, or native App Store/Play Store apps. Keeping this boundary tight is a product and security decision.
+The preview does **not** include background Push Notification, Live Activity, voice, photos, result review, a terminal, code editor, Git operations, or native App Store/Play Store apps. Keeping this boundary explicit is a product and security decision.
 
 ## A typical moment
 
 1. Start a DeepSeek Harness task on your computer.
 2. Scan the DSH Live pairing QR code with your phone.
-3. Walk away while the agent works.
-4. Receive an approval request on your phone.
+3. Keep the paired PWA open while the agent works.
+4. Inspect an approval request when it appears on the phone.
 5. Hold **Allow once** to approve the exact action, or tap **Reject**.
-6. Follow the task's live state and add a photo or dictated instruction if needed.
-7. Review the final summary and mark the result accepted—or ask for another change.
+6. Continue on desktop; either surface may resolve the next approval.
 
 ## Installation
 
@@ -89,26 +84,19 @@ pnpm install
 pnpm run check
 pnpm run build
 pnpm pack
-dsh plugin --profile web add ./dsh-live-0.0.0.tgz
+dsh plugin --profile web add ./dsh-live-0.1.0-preview.1.tgz
 ```
 
-### Planned stable installation
+### Pinned GitHub preview
 
-After `v0.1.0` passes the release gates, the recommended path will be:
+A reproducible source install can be pinned to the preview tag:
 
 ```bash
-dsh plugin --profile web add dsh-live
+dsh plugin --profile web add github:zhoushuoshi-code/dsh-live#v0.1.0-preview.1
 dsh web
 ```
 
-For a reproducible install pinned to a reviewed GitHub tag:
-
-```bash
-dsh plugin --profile web add github:zhoushuoshi-code/dsh-live#v0.1.0
-dsh web
-```
-
-The release package will ship prebuilt JavaScript and a standard DSH bundle manifest. Users will not need Python, Rust, native compilation, or a repository build.
+The repository commits prebuilt JavaScript and a standard DSH bundle manifest. The CI workflow also produces an installable tarball artifact. An npm release remains a later, separately verified distribution step.
 
 ### Target requirements
 
@@ -119,7 +107,7 @@ The release package will ship prebuilt JavaScript and a standard DSH bundle mani
 
 Compatibility will be widened only after it is tested—not assumed.
 
-## How it will work
+## How it works
 
 ```mermaid
 flowchart LR
@@ -133,10 +121,9 @@ flowchart LR
 
 The desktop plugin initiates the outbound connection, so the user does not expose a local port to the public internet. The relay transports encrypted envelopes and has no access to prompts, commands, images, results, pairing secrets, or API keys. It necessarily observes routing and traffic metadata. See the [versioned E2EE protocol and threat model](docs/e2ee-protocol.md).
 
-DSH Live is being designed against DeepSeek Harness's official extension seams:
+DSH Live uses DeepSeek Harness's official extension seams:
 
 - [`approval/request`](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/approval.md) for one-shot, fail-closed decisions
-- [`ctx.attachments`](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/attachment.md) for validated, durable image attachments
 - Profile plugin bundles for installation into the `web` profile
 
 No DOM scraping, UI monkey-patching, or dependency on private in-memory objects is planned.
@@ -147,9 +134,9 @@ The first technical spike passed against DeepSeek Harness `0.1.0-rc.7`. DSH Live
 
 ## Security model
 
-Remote approval is a security boundary, not just a notification feature. The implementation and threat model must be reviewed before the first release.
+Remote approval is a security boundary, not just a notification feature. The preview implements and tests these guarantees:
 
-Planned guarantees:
+Implemented guarantees:
 
 - **Allow once only.** The phone cannot create a permanent approval rule.
 - **Fail closed.** Disconnects, timeouts, cancellation, invalid messages, and missing handlers never become approval.
@@ -159,16 +146,16 @@ Planned guarantees:
 - **No API keys on the phone.** DeepSeek credentials remain with the Harness host.
 - **Desktop remains authoritative.** Losing the phone or relay must not disable local approval or task control.
 
-These are release requirements, not claims that the current pre-alpha repository already satisfies them.
+See [SECURITY.md](SECURITY.md) for private vulnerability reporting and [the protocol document](docs/e2ee-protocol.md) for the exact metadata boundary.
 
 ## Platform support
 
-The first release will be tested against this explicit support matrix:
+The maintainer reports completing the approval journey on both phone families. Exact device/browser versions should still be included in bug reports:
 
 | Platform | Supported path | Notes |
 | --- | --- | --- |
-| iPhone | iOS 17+ · Safari · Add to Home Screen | Push behavior depends on installed PWA permissions |
-| Android | Android 12+ · Chrome 120+ | Installable PWA with browser notification permissions |
+| iPhone | Current Safari · direct QR link | Keep the PWA foregrounded; no background Push yet |
+| Android | Current Chrome · direct QR link | Keep the PWA foregrounded; no background Push yet |
 | Desktop host | DeepSeek Harness Web profile | Initial target: DSH `0.1.0-rc.7` |
 | Embedded browsers | Not supported | Open the pairing link in Safari or Chrome |
 
@@ -181,16 +168,18 @@ If notifications are unavailable, an open PWA must still receive live updates. I
 - [x] Implement the QR pairing, E2EE session protocol, and blind-relay core
 - [x] Implement the deployable WSS relay and connect the Host/mobile transport adapters
 - [x] Build the minimum mobile approval inbox and encrypted decision state machine
-- [ ] Deploy the public production relay and publish its operational status
+- [x] Add Relay Ping/Pong heartbeat and GitHub CI release checks
+- [x] Complete maintainer-reported iPhone and Android real-device approval runs
+- [ ] Publish and operate a shared production Relay with a status page
 - [ ] Add text, system dictation, and native image attachment flow
 - [ ] Add final-result review and follow-up input
-- [ ] Pass iPhone and Android real-device release gates
-- [ ] Verify npm tarball and pinned GitHub-tag installation in clean environments
-- [ ] Publish `v0.1.0`
+- [ ] Add background Push Notification and platform Live Activity surfaces
+- [ ] Publish and verify an npm package in a clean environment
+- [ ] Promote the preview to stable `v0.1.0`
 
 Progress will be marked here only after the corresponding behavior is demonstrated and tested.
 
-## Release gates for v0.1.0
+## Release gates for the approval preview
 
 A release is not ready because the interface looks finished. It is ready only when all of these behaviors pass:
 
@@ -199,19 +188,18 @@ A release is not ready because the interface looks finished. It is ready only wh
 3. A desktop decision resolves the phone card immediately.
 4. Phone or relay disconnection never breaks desktop approval.
 5. Turn cancellation withdraws the mobile request.
-6. Photos arrive through the official attachment store with format and size validation.
-7. A clean user can install the published package without building the repository.
-8. The critical journey passes on a real supported iPhone and Android device.
+6. The installable tarball contains the plugin, PWA, Relay, and deployment docs.
+7. The critical journey passes on a real iPhone and Android device.
 
 ## Contributing
 
-DSH Live is being built in public. Early contributions are most valuable when they improve the approval bridge, protocol security, cross-platform PWA behavior, accessibility, or reproducible installation.
+DSH Live is being built in public. Early contributions are most valuable when they improve the approval bridge, protocol security, cross-platform PWA behavior, accessibility, or reproducible installation. See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 Before opening a large pull request, please start with an issue describing the user problem, security implications, and proposed acceptance test. Bug reports should include the DeepSeek Harness version, host OS, phone/browser version, reproduction steps, and expected versus actual behavior—without secrets or private prompts.
 
 ## Project status
 
-**Pre-alpha / active development.** There is currently no stable release, hosted production relay, npm package, or compatibility guarantee. Watch the repository for the first installable preview.
+**`v0.1.0` Preview / active development.** The self-hosted encrypted approval loop is implemented and source-installable. There is no shared hosted Relay, npm release, background Push, or compatibility guarantee beyond the documented DSH target.
 
 DSH Live is an independent community project and is not affiliated with or endorsed by DeepSeek.
 
