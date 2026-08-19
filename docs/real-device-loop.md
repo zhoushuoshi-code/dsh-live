@@ -28,6 +28,10 @@ pnpm run build
 
 The included relay serves both the mobile PWA and `/v1/connect`. In production it must sit behind an HTTPS reverse proxy whose public WebSocket URL uses `wss://`.
 
+For a click-by-click hosted setup with a free Railway hostname, environment
+variables, custom-domain instructions, cost controls, and troubleshooting, see
+[Deploy your own Relay on Railway](deploy-railway.md).
+
 ```bash
 docker build -t dsh-live-relay .
 docker run --rm -p 8787:8787 \

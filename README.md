@@ -82,7 +82,7 @@ The first release will **not** include a terminal, code editor, multi-agent dash
 
 ### Current status
 
-There is no stable npm release today. A built checkout can be packed and installed into an isolated DSH Web profile for development and real-device testing. See the [complete relay, plugin configuration, and acceptance guide](docs/real-device-loop.md).
+There is no stable npm release today. A built checkout can be packed and installed into an isolated DSH Web profile for development and real-device testing. Start with the [beginner Railway deployment guide](docs/deploy-railway.md), then use the [complete plugin configuration and real-device acceptance guide](docs/real-device-loop.md).
 
 ```bash
 pnpm install
