@@ -3,7 +3,7 @@
 ## Status
 
 Protocol version: `1`  
-Implementation status: tested protocol core; hosted WebSocket adapter not deployed  
+Implementation status: tested protocol and WebSocket adapter; public hosted instance not deployed
 Cryptographic API: Web Crypto, supported by current Node.js, Safari, and Chrome
 
 ## Security objective

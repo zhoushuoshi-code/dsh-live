@@ -18,7 +18,7 @@
 </div>
 
 > [!IMPORTANT]
-> **DSH Live is currently pre-alpha and is not installable yet.** The repository is public early so the approval bridge, security model, and mobile experience can be developed in the open. Installation commands below become supported only after the first verified release is published.
+> **DSH Live is currently a source-installable pre-alpha.** The minimum encrypted phone-approval loop is implemented, but no public production relay or signed `v0.1.0` release exists yet. Use the development installation only with a relay you control.
 
 ## Stop babysitting your coding agent
 
@@ -82,7 +82,15 @@ The first release will **not** include a terminal, code editor, multi-agent dash
 
 ### Current status
 
-There is no supported installation today. The repository does not yet contain a release-quality DSH bundle, and no npm package has been published. Please do not treat the future commands below as working until a GitHub release marks them as verified.
+There is no stable npm release today. A built checkout can be packed and installed into an isolated DSH Web profile for development and real-device testing. See the [complete relay, plugin configuration, and acceptance guide](docs/real-device-loop.md).
+
+```bash
+pnpm install
+pnpm run check
+pnpm run build
+pnpm pack
+dsh plugin --profile web add ./dsh-live-0.0.0.tgz
+```
 
 ### Planned stable installation
 
@@ -171,8 +179,9 @@ If notifications are unavailable, an open PWA must still receive live updates. I
 - [x] Validate the mobile/desktop approval bridge without stealing desktop ownership
 - [x] Scaffold the installable DSH profile bundle and commit prebuilt artifacts
 - [x] Implement the QR pairing, E2EE session protocol, and blind-relay core
-- [ ] Deploy the hosted WSS relay and connect the Host/mobile transport adapters
-- [ ] Build the mobile approval inbox and live state machine
+- [x] Implement the deployable WSS relay and connect the Host/mobile transport adapters
+- [x] Build the minimum mobile approval inbox and encrypted decision state machine
+- [ ] Deploy the public production relay and publish its operational status
 - [ ] Add text, system dictation, and native image attachment flow
 - [ ] Add final-result review and follow-up input
 - [ ] Pass iPhone and Android real-device release gates

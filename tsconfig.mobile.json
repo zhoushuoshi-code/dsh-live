@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "rootDir": ".",
+    "outDir": "mobile-dist",
+    "declaration": false,
+    "sourceMap": false,
+    "verbatimModuleSyntax": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable", "WebWorker"]
+  },
+  "include": [
+    "mobile/main.ts",
+    "src/crypto/base64url.ts",
+    "src/crypto/protocol.ts",
+    "src/transport/wire.ts"
+  ]
+}

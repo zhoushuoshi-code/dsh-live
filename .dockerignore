@@ -1,0 +1,7 @@
+.git
+.dsh-*-home
+node_modules
+mobile-dist
+lib
+*.tgz
+coverage

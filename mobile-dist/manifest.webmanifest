@@ -1,0 +1,10 @@
+{
+  "name": "DSH Live",
+  "short_name": "DSH Live",
+  "description": "Secure mobile approval inbox for DeepSeek Harness",
+  "start_url": "/pair",
+  "display": "standalone",
+  "background_color": "#090b12",
+  "theme_color": "#090b12",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
